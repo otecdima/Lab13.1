@@ -3,6 +3,7 @@ package visitor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class Group<T> extends Task<T> {
     public String groupUuid;
@@ -19,9 +20,19 @@ public class Group<T> extends Task<T> {
     @Override
     public void freeze() {
         super.freeze();
+        groupUuid = UUID.randomUUID().toString();
         for (Task<T> task: tasks) {
             task.freeze();
         }
+    }
+
+    @Override
+    public void stamp(Visitor<T> visitor) {
+        visitor.onGroupStart(this);
+        for(Task<T> task: tasks){
+            task.stamp(visitor);
+        }
+        visitor.onGroupEnd(this);
     }
 
     @Override
